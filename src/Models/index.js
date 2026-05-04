@@ -13,9 +13,19 @@ const db = {};
 
 let sequelize;
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], { config, dialectModule: pg });
+  sequelize = new Sequelize(process.env[config.use_env_variable], {dialect: 'postgres',dialectModule: pg,
+    logging: false,
+  });
 } else {
-  sequelize = new Sequelize(config.database, config.username, config.password, { config, dialectModule: pg });
+  sequelize = new Sequelize(config.database,config.username,config.password,
+    {
+      host: config.host,
+      port: config.port,
+      dialect: 'postgres',       
+      dialectModule: pg,
+      logging: false,
+    }
+  );
 }
 
 fs
