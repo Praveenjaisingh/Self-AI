@@ -1,16 +1,26 @@
-// scripts/flushDB.js
-const { sequelize } = require('../Models'); 
+const { Sequelize } = require('sequelize');
+const pg = require('pg');
 
-async function flushDB() {
-  try {
-    await sequelize.sync({ force: true });
-
-    console.log('Database flushed successfully ✅');
-    process.exit(0);
-  } catch (error) {
-    console.error('Error flushing database ❌:', error);
-    process.exit(1);
-  }
-}
-
-flushDB();
+const sequelize = process.env.DATABASE_URL
+  ? new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectModule: pg,
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  })
+  : new Sequelize(
+    process.env.DB_NAME,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
+    {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      dialect: 'postgres',
+      logging: false,
+    }
+  );
